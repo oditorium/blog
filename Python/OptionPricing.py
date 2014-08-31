@@ -201,11 +201,11 @@ class OptionPricing:
         if fwd == None: fwd = self.Forward(rate=rate, yld=yld, time=time) 
         dF = self._dSpc * fwd
         fvp = self.FV(fwd=fwd+dF)
-        fvm = self.PV(fwd=fwd-dF)
-        return None
+        fvm = self.FV(fwd=fwd-dF)
+        return (fvp - fvm) / (2.0 * dF)
   
     
-    def DeltaFwdCash(self):
+    def DeltaFwdCash(self, fwd=None, time=None, rate=None, yld=None, sig=None):
         """
         
         the "Cash-Forward-Delta" greek, ie the Forward Delta expressed in currency units
@@ -213,8 +213,9 @@ class OptionPricing:
             DeltaFwdCash = DeltaForward x Forward
         
         """
-        return None
-
+        if fwd == None: fwd = self.Forward(rate=rate, yld=yld, time=time) 
+        return fwd * self.DeltaFwd(fwd=fwd, time=time, rate=rate, yld=yld, sig=sig)
+ 
     
     def Gamma(self, spot=None, time=None, rate=None, yld=None, sig=None):
         """
