@@ -1,0 +1,4 @@
+,key,description
+deposit,ILM.W.U2.C.L022.U2.EUR,current usage of the deposit facility
+lending,ILM.M.U2.C.A05B.U2.EUR,current aggregate usage of major lending facilities
+lending_marg,ILM.W.U2.C.A055.U2.EUR,current usage of the marginal lending facility
