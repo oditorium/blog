@@ -1,0 +1,36 @@
+#!/usr/bin/ruby
+require 'twitter'
+
+# ------------------------------------------------------------
+# the values (A) - (D) below need to be fille in before this
+# script can be run. How to obtain them is described in the
+# auth script
+# ------------------------------------------------------------
+
+
+client = Twitter::REST::Client.new do |config|
+  config.consumer_key        = "---"  # (A)
+  config.consumer_secret     = "---"  # (B)
+  config.access_token        = "---"  # (C)
+  config.access_token_secret = "---"  # (D)
+end
+
+# ------------------------------------------------------------
+# get the following and follower id's
+# ------------------------------------------------------------
+
+user = ARGV[0].to_i
+#user = nil
+#user = 'oditorium'
+following_ids = client.friend_ids(user).to_a
+follower_ids = client.follower_ids(user).to_a
+puts "The user is following "+following_ids.count.to_s+" accounts, and is followed by "+follower_ids.count.to_s+" accounts"
+
+# ------------------------------------------------------------
+# save the results into a text file
+# ------------------------------------------------------------
+
+File.open("u"+user.to_s+"_following_ids.txt", 'w') { |file| file.write(following_ids) }
+File.open("u"+user.to_s+"_follower_ids.txt", 'w') { |file| file.write(follower_ids) }
+
+

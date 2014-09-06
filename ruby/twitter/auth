@@ -1,0 +1,60 @@
+#!/usr/bin/ruby
+
+require 'launchy'
+require 'oauth'
+require 'twitter'
+require 'highline/import'
+ 
+
+def generate_authorize_uri(consumer, request_token)
+  request = consumer.create_signed_request(:get, consumer.authorize_path, request_token, pin_auth_parameters)
+  params = request['Authorization'].sub(/^OAuth\s+/, '').split(/,\s+/).collect do |param|
+    key, value = param.split('=')
+    value =~ /"(.*?)"/
+    "#{key}=#{CGI.escape(Regexp.last_match[1])}"
+  end.join('&')
+  "#{Twitter::REST::Client::ENDPOINT}#{request.path}?#{params}"
+end
+
+def pin_auth_parameters
+  {:oauth_callback => 'oob'}
+end
+
+key = "---app api key---"         # (A)
+secret = "---app api secret---"   # (B)
+
+# ------------------------------------------------------------
+# (A) and (B) are obtained from https://apps.twitter.com/
+# after creating the new app both the key and the secret
+# can be found under the tab `API Keys`
+# ------------------------------------------------------------
+
+puts "Your application API key is: "+key
+puts "Your application API secret is: "+secret
+
+consumer = OAuth::Consumer.new(key, secret, :site => Twitter::REST::Client::ENDPOINT)
+request_token = consumer.get_request_token
+uri = generate_authorize_uri(consumer, request_token)
+puts "\nPlease navigate to the below URI in your browser:\n\n"+uri
+
+pin = ask "\nOnce you have finished the authorisation procedure, please enter the PIN and hit Enter"
+access_token = request_token.get_access_token(:oauth_verifier => pin.chomp)
+oauth_response = access_token.get('/1.1/account/verify_credentials.json?skip_status=true')
+
+puts "your access token: "+access_token.token     # (C)
+puts "your access secret: "+access_token.secret   # (D)
+
+# ------------------------------------------------------------
+# (C) and (D) are obtained running this script
+# they will be provided once the operator has navigated to
+# the URL provided by this script, granted the app access,
+# retrieved the PIN and entered it here
+# ------------------------------------------------------------
+
+puts "your Twitter id: "+oauth_response.body.id_str
+puts "your screen name: "+oauth_response.body.screen_name
+puts "your full name: "+oauth_response.body.name
+
+#puts oauth_response.body
+
+
