@@ -1,4 +1,4 @@
-""" generates various diplayhooks for iPython
+""" generates various displayhooks for iPython
 
 this module does not really export any functions, but if it is imported
 the iPython displayhooks are set to automatically display content
@@ -17,6 +17,9 @@ source: http://nbviewer.ipython.org/gist/deeplook/5162445
 from io import BytesIO
 from IPython.core import display
 from PIL import Image
+
+__version__    = "0.1"
+__version_dt__ = "2014-09-20"
 
 
 def display_pil_image(im):
